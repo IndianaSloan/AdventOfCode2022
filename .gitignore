@@ -1,0 +1,13 @@
+.idea/.gitignore
+.idea/kotlinc.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/libraries/KotlinJavaRuntime.xml
+out/production/advent2022/AdventChallenge.class
+out/production/advent2022/Day1$Companion.class
+out/production/advent2022/Day1$WhenMappings.class
+out/production/advent2022/Day1.class
+out/production/advent2022/MainKt.class
+out/production/advent2022/Section.class
+out/production/advent2022/META-INF/advent2022.kotlin_module
