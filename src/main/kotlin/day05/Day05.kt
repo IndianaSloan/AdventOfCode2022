@@ -1,7 +1,6 @@
 package day05
 
 import readInput
-import java.util.regex.Matcher
 
 fun main() {
 
@@ -34,7 +33,6 @@ fun main() {
                 .map { it.toInt() }
         }
     }
-
 
     fun moveStacks(stacks: MutableMap<Int, MutableList<Char>>, from: Int, to: Int, moveQty: Int): MutableMap<Int, MutableList<Char>> {
         val fromStack = stacks[from]!!
