@@ -15,5 +15,5 @@ fun main() {
     println("Part2: ${part2(input)}")
 }
 
-fun String.decrypt(chunkSize: Int, step: Int = 1): Int =
+private fun String.decrypt(chunkSize: Int, step: Int = 1): Int =
     windowed(chunkSize, step).indexOfFirst { it.toSet().size == chunkSize } + chunkSize
