@@ -24,84 +24,85 @@ fun main() {
 }
 
 fun processRopeMoves(instructions: List<Pair<String, Int>>, length: Int): Int {
-    val tailPoints = mutableSetOf<Point>()
-    val rope = MutableList(length) { Point(0, 0) }
+    val knots = mutableSetOf<Knot>()
+    val rope = MutableList(length) { Knot(0, 0) }
     instructions.forEach { (direction, steps) ->
         (0 until steps).forEach { _ ->
             rope.forEachIndexed { index, knot ->
                 if (index == 0) {
-                    rope[index] = knot.movePoint(direction)
-                    knot.movePoint(direction)
+                    rope[index] = knot.moveKnot(direction)
+                    knot.moveKnot(direction)
                 } else {
-                    val previousKnot = rope[index - 1]
-                    if (!knot.isTouching(previousKnot)) {
-                        rope[index] = knot.moveTowards(previousKnot)
+                    val leadKnot = rope[index - 1]
+                    if (!knot.isTouching(leadKnot)) {
+                        rope[index] = knot.moveTowards(leadKnot)
                     }
                 }
             }
-            tailPoints.add(rope.last())
+            knots.add(rope.last())
         }
     }
-    return tailPoints.count()
+    return knots.count()
 }
 
-fun parseInstructions(input: List<String>): List<Pair<String, Int>> = input.map {
+private fun parseInstructions(input: List<String>): List<Pair<String, Int>> = input.map {
     val (dir, steps) = it.split(" ")
     dir to steps.toInt()
 }
 
-data class Point(var x: Int, var y: Int)
+private data class Knot(val x: Int, val y: Int) {
 
-fun Point.movePoint(direction: String): Point {
-    return when (direction) {
-        "U" -> Point(x, y + 1)
-        "D" -> Point(x, y - 1)
-        "L" -> Point(x - 1, y)
-        "R" -> Point(x + 1, y)
-        "UR" -> Point(x + 1, y + 1)
-        "UL" -> Point(x - 1, y + 1)
-        "DL" -> Point(x - 1, y - 1)
-        "DR" -> Point(x + 1, y - 1)
-        else -> Point(x, y)
+    fun isTouching(lead: Knot): Boolean = x - lead.x in (-1..1) && y - lead.y in (-1..1)
+
+    fun moveKnot(direction: String): Knot {
+        return when (direction) {
+            "U" -> Knot(x, y + 1)
+            "D" -> Knot(x, y - 1)
+            "L" -> Knot(x - 1, y)
+            "R" -> Knot(x + 1, y)
+            "UR" -> Knot(x + 1, y + 1)
+            "UL" -> Knot(x - 1, y + 1)
+            "DL" -> Knot(x - 1, y - 1)
+            "DR" -> Knot(x + 1, y - 1)
+            else -> Knot(x, y)
+        }
+    }
+
+    fun moveTowards(lead: Knot) = moveKnot(getMoveDirectionToLead(lead))
+
+    fun getMoveDirectionToLead(lead: Knot): String {
+        val illegalDirection =
+            IllegalStateException("Unknown directional for Point($x, $y) to Point(${lead.x}, ${lead.y})")
+        val yMove = lead.y - y
+        val xMove = lead.x - x
+        return if (yMove == 2) {
+            when (xMove) {
+                -1, -2 -> "UL"
+                0 -> "U"
+                1, 2 -> "UR"
+                else -> throw illegalDirection
+            }
+        } else if (yMove == -2) {
+            when (xMove) {
+                -1, -2 -> "DL"
+                0 -> "D"
+                1, 2 -> "DR"
+                else -> throw illegalDirection
+            }
+        } else if (xMove == 2) {
+            when (yMove) {
+                -1 -> "DR"
+                0 -> "R"
+                1 -> "UR"
+                else -> throw illegalDirection
+            }
+        } else if (xMove == -2) {
+            when (yMove) {
+                -1 -> "DL"
+                0 -> "L"
+                1 -> "UL"
+                else -> throw illegalDirection
+            }
+        } else throw illegalDirection
     }
 }
-
-fun Point.isTouching(other: Point): Boolean = x - other.x in (-1..1) && y - other.y in (-1..1)
-fun Point.moveTowards(other: Point) = movePoint(getDirection(other))
-
-fun Point.getDirection(other: Point): String {
-    val illegalDirection =
-        IllegalStateException("Unknown directional for Point($x, $y) to Point(${other.x}, ${other.y})")
-    val yMove = other.y - y
-    val xMove = other.x - x
-    return if (yMove == 2) {
-        when (xMove) {
-            -1, -2 -> "UL"
-            0 -> "U"
-            1, 2 -> "UR"
-            else -> throw illegalDirection
-        }
-    } else if (yMove == -2) {
-        when (xMove) {
-            -1, -2 -> "DL"
-            0 -> "D"
-            1, 2 -> "DR"
-            else -> throw illegalDirection
-        }
-    } else if (xMove == 2) {
-        when (yMove) {
-            -1 -> "DR"
-            0 -> "R"
-            1 -> "UR"
-            else -> throw illegalDirection
-        }
-    } else if (xMove == -2) {
-        when (yMove) {
-            -1 -> "DL"
-            0 -> "L"
-            1 -> "UL"
-            else -> throw illegalDirection
-        }
-    } else throw illegalDirection
-}
-
