@@ -12,7 +12,7 @@ fun main() {
 
         input.forEach {
             val operation = it.split(" ")
-            
+
             if (operation.first() == "noop") {
                 operationCount += 1
                 if (operationCount in listOf(20, 60, 100, 140, 180, 220, 260, 300)) {
