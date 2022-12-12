@@ -8,9 +8,8 @@ fun main() {
     val startChar = 'S'
     val finishChar = 'E'
 
-    val visitedPoints = mutableSetOf<Point>()
-
     fun iterate(rawInput: List<String>, startPoint: Point): Int {
+        val visitedPoints = mutableSetOf<Point>()
         val mappedInput = rawInput.map { it.replace(startChar, 'a').replace(finishChar, 'z') }
         val finishRow = rawInput.indexOfFirst { it.contains(finishChar) }
         val finishColumn = rawInput[finishRow].indexOf(finishChar)
@@ -30,9 +29,9 @@ fun main() {
             offsets
                 .map { neighbourOffset -> Point(neighbourOffset.x + point.x, neighbourOffset.y + point.y) }
                 .forEach { neighbourPoint ->
-                    val neighbourChar = rawInput.getOrNull(neighbourPoint.y)?.getOrNull(neighbourPoint.x)
+                    val neighbourChar = mappedInput.getOrNull(neighbourPoint.y)?.getOrNull(neighbourPoint.x)
                     if (neighbourChar != null) {
-                        if (neighbourChar - rawInput[point.y][point.x] <= 1) {
+                        if (neighbourChar - mappedInput[point.y][point.x] <= 1) {
                             val currentNeighbourValue = map[neighbourPoint.y][neighbourPoint.x]
                             val currentPointValue = map[point.y][point.x] + 1
                             map.set(neighbourPoint.x, neighbourPoint.y, minOf(currentNeighbourValue, currentPointValue))
@@ -45,8 +44,6 @@ fun main() {
                 }
             visitedPoints.add(point)
         }
-
-        visitedPoints.clear()
         return map[finishPoint.y][finishPoint.x]
     }
 
